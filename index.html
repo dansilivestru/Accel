@@ -1,0 +1,52 @@
+<html>
+	<head>
+        <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no;" />
+            <meta charset="utf-8">
+                <script type="text/javascript" charset="utf-8" src="phonegap-1.3.0.js"></script>
+                </head>
+		<body>
+            <script type="text/javascript">
+                var min = {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                },
+                max = {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                },
+                options = { frequency: 50 };
+                
+                function onSuccess(accel) {
+                    max.x = (max.x < accel.x) ? accel.x : max.x;
+                    max.y = (max.y < accel.y) ? accel.y : max.y;
+                    max.z = (max.z < accel.z) ? accel.z : max.z;
+                    min.x = (min.x > accel.x) ? accel.x : min.x;
+                    min.y = (min.y > accel.y) ? accel.y : min.y;
+                    min.z = (min.z > accel.z) ? accel.z : min.z;
+                    
+                    document.getElementById("max").innerText = "max = x: " + max.x + " | y: " + max.y + " | z: " + max.z;
+                    document.getElementById("min").innerText = "min = x: " + min.x + " | y: " + min.y + " | z: " + min.z;
+                }
+                
+                function onError() {
+                    alert('onError!');
+                };
+                
+                function onDeviceReady() {
+                    navigator.accelerometer.watchAcceleration(onSuccess, onError, options);
+                }
+                
+                window.addEventListener("load", function () {
+                                        document.addEventListener("deviceready", onDeviceReady, false);
+                                        });
+                </script>
+			<div>
+				<p id="max"></p>
+				<p id="min"></p>
+			</div>
+		</body>
+	</head>
+</html>
