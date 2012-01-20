@@ -17,10 +17,20 @@
                     y: 0,
                     z: 0
                 },
+                delta = {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                };
                 options = { frequency: 50 };
                 
-                function onSuccess(accel, prefix) {
-                    prefix = prefix || "";
+                function onSuccess(accel) {
+                    delta = {
+                        x: delta.x < Math.abs(max.x - accel.x) ? Math.abs(max.x - accel.x) : delta.x,
+                        y: delta.y < Math.abs(max.y - accel.y) ? Math.abs(max.y - accel.y) : delta.y,
+                        z: delta.z < Math.abs(max.z - accel.z) ? Math.abs(max.z - accel.z) : delta.z,
+                    };
+
                     max.x = (max.x < accel.x) ? accel.x : max.x;
                     max.y = (max.y < accel.y) ? accel.y : max.y;
                     max.z = (max.z < accel.z) ? accel.z : max.z;
@@ -28,8 +38,9 @@
                     min.y = (min.y > accel.y) ? accel.y : min.y;
                     min.z = (min.z > accel.z) ? accel.z : min.z;
                     
-                    document.getElementById(prefix + "max").innerText = "max = x: " + max.x + " | y: " + max.y + " | z: " + max.z;
-                    document.getElementById(prefix + "min").innerText = "min = x: " + min.x + " | y: " + min.y + " | z: " + min.z;
+                    document.getElementById("max").innerText = "max = x: " + max.x + " | y: " + max.y + " | z: " + max.z;
+                    document.getElementById("min").innerText = "min = x: " + min.x + " | y: " + min.y + " | z: " + min.z;
+                    document.getElementById("delta").innerText = "x: " + delta.x + " | y: " + delta.y + " | z: " + delta.z;
                 }
                 
                 function onError() {
@@ -44,15 +55,13 @@
                     document.addEventListener("deviceready", onDeviceReady, false);
                 });
 
-                window.addEventListener("devicemotion", function(event) {
-                    onSuccess(event.acceleration, "dv_");
-                });
                 </script>
 			<div>
+                <h2>Min Max values</h2>
 				<p id="max"></p>
 				<p id="min"></p>
-				<p id="dv_max"></p>
-				<p id="dv_min"></p>
+                <h2>delta</h2>
+                <p id="delta"></p>
 			</div>
 		</body>
 	</head>
