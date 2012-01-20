@@ -17,6 +17,11 @@
                     y: 0,
                     z: 0
                 },
+                old = {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                },
                 maxDelta = {
                     x: 0,
                     y: 0,
@@ -25,16 +30,25 @@
                 options = { frequency: 50 };
                 
                 function onSuccess(accel) {
+                    var delta = {
+                            x: Math.abs(old.x - accel.x),
+                            y: Math.abs(old.y - accel.y),
+                            z: Math.abs(old.z - accel.z),
+                        },
+                        ratio = {
+                            x: 0,
+                            y: 0,
+                            z: 0
+                        }
+
+                    old.x = accel.x;
+                    old.y = accel.y;
+                    old.z = accel.z;
+
                     maxDelta = {
                         x: maxDelta.x < Math.abs(max.x - accel.x) ? Math.abs(max.x - accel.x) : maxDelta.x,
                         y: maxDelta.y < Math.abs(max.y - accel.y) ? Math.abs(max.y - accel.y) : maxDelta.y,
                         z: maxDelta.z < Math.abs(max.z - accel.z) ? Math.abs(max.z - accel.z) : maxDelta.z,
-                    };
-
-                    delta = {
-                        x: max.x - accel.x,
-                        y: max.y - accel.y,
-                        z: max.z - accel.z,
                     };
 
                     max.x = (max.x < accel.x) ? accel.x : max.x;
@@ -44,12 +58,18 @@
                     min.y = (min.y > accel.y) ? accel.y : min.y;
                     min.z = (min.z > accel.z) ? accel.z : min.z;
 
-                    ratio = (max.x - min.x) / delta.x;
+                    ratio.x = delta.x / (max.x - min.x);
+                    ratio.y = delta.y / (max.y - min.y);
+                    ratio.z = delta.z / (max.z - min.z);
+
+                    var color = 255 * ratio.x;
+                    color = 255 >= color ? color : 255;
+                    document.body.setAttribute("style", "background: #00" + parseInt(color, 10).toString(16) + "00");
 
                     document.getElementById("max").innerText = "max = x: " + max.x + " | y: " + max.y + " | z: " + max.z;
                     document.getElementById("min").innerText = "min = x: " + min.x + " | y: " + min.y + " | z: " + min.z;
                     document.getElementById("delta").innerText = "x: " + maxDelta.x + " | y: " + maxDelta.y + " | z: " + maxDelta.z;
-                    document.getElementById("ratio").innerText = "ratio: " + ratio;
+                    document.getElementById("ratio").innerText = "ratio: " + ratio.x;
                 }
                 
                 function onError() {
